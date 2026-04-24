@@ -673,20 +673,36 @@
     // ── DEFAULT DATA ────────────────────────────────────
     const defaultData = {
         currentPC: [
-            { name: 'CPU',        details: 'Ryzen 7 5700X',     price: 162,  originalPrice: null, purchased: false, url: '' },
-            { name: 'AIO Cooler', details: 'DI COOLING DX240',  price: 43,   originalPrice: 80,   purchased: true,  url: '' },
-            { name: 'RAM',        details: '2x8GB 3200MHz',     price: null, originalPrice: null, purchased: false, url: '' }
+            { name: 'CPU',        details: 'Ryzen 7 5700X',       price: 162,      originalPrice: null, purchased: false, url: '' },
+            { name: 'AIO Cooler', details: 'DI COOLING DX240',    price: 43,       originalPrice: 80,   purchased: true,  url: '' },
+            { name: 'RAM',        details: '2x8GB DDR4 3200MHz',  price: '30-50',  originalPrice: null, purchased: false, url: '' }
         ],
         newPC: [
-            { name: 'CPU',         details: 'Ryzen 5 9600X',           price: 198,       originalPrice: 280,  purchased: false, url: '' },
-            { name: 'Motherboard', details: 'MSI PRO B650-A WiFi',     price: 140,       originalPrice: 210,  purchased: true,  url: '' },
-            { name: 'AIO Cooler',  details: 'DARKROCK D360',           price: 50,        originalPrice: null, purchased: true,  url: '' },
-            { name: 'RAM',         details: '2x16GB 6000MHz',          price: null,      originalPrice: null, purchased: false, url: '' },
-            { name: 'GPU',         details: 'GIGABYTE RX 7800 XT 16GB',price: '550-600', originalPrice: null, purchased: false, url: '' },
-            { name: 'PSU',         details: '650W Modular/Semi-Modular',price: null,      originalPrice: null, purchased: false, url: '' },
-            { name: 'Storage',     details: '2TB NVMe (x2)',           price: '200-250', originalPrice: null, purchased: false, url: '' }
+            { name: 'CPU',         details: 'Ryzen 5 9600X',                          price: 180,         originalPrice: 280,  purchased: false, url: '' },
+            { name: 'Motherboard', details: 'MSI PRO B650-A WiFi',                    price: 135,         originalPrice: 210,  purchased: true,  url: '' },
+            { name: 'AIO Cooler',  details: 'DARKROCK D360',                          price: 50,          originalPrice: null, purchased: true,  url: '' },
+            { name: 'RAM',         details: '2x16GB DDR5 6000MHz (G.Skill Flare X5)', price: '75-90',     originalPrice: null, purchased: false, url: '' },
+            { name: 'GPU',         details: 'RX 9070 16GB | stretch: 9070 XT ~$649', price: '499-549',   originalPrice: null, purchased: false, url: '' },
+            { name: 'PSU',         details: '650W Modular (Corsair RM650x)',          price: '100-130',   originalPrice: null, purchased: false, url: '' },
+            { name: 'Storage',     details: '2TB NVMe x2 (⚠️ SSD shortage — prices up ~2x)', price: '300-500 ea', originalPrice: null, purchased: false, url: '' }
         ],
         peripherals: []
+    };
+
+    // Latest researched prices — applied via "Update Prices" button without touching
+    // purchased states, custom URLs, or any other user-edited fields.
+    const LATEST_PRICES = {
+        currentPC: {
+            'RAM': { price: '30-50' }
+        },
+        newPC: {
+            'CPU':         { price: 180 },
+            'Motherboard': { price: 135 },
+            'RAM':         { price: '75-90',   details: '2x16GB DDR5 6000MHz (G.Skill Flare X5)' },
+            'GPU':         { price: '499-549', details: 'RX 9070 16GB | stretch: 9070 XT ~$649' },
+            'PSU':         { price: '100-130', details: '650W Modular (Corsair RM650x)' },
+            'Storage':     { price: '300-500 ea', details: '2TB NVMe x2 (⚠️ SSD shortage — prices up ~2x)' }
+        }
     };
 
     // ── DATA PERSISTENCE ────────────────────────────────
@@ -914,11 +930,15 @@
                     : 'Firebase is configured — waiting for connection. Changes are saved locally until the connection is restored.'
                 }</p>
                 <div class="sync-actions">
-                    <button class="btn btn-primary btn-sm" onclick="pushToCloud()">☁️ Push This Device → Cloud</button>
-                    <button class="btn btn-secondary btn-sm" onclick="exportToFile()">💾 Download JSON backup</button>
+                    <button class="btn btn-primary btn-sm" onclick="applyPriceUpdates()">🔄 Update Prices & GPU</button>
+                    <button class="btn btn-secondary btn-sm" onclick="pushToCloud()">☁️ Push This Device → Cloud</button>
+                    <button class="btn btn-secondary btn-sm" onclick="exportToFile()">💾 Download JSON</button>
                     <button class="btn btn-secondary btn-sm" onclick="document.getElementById('importFile').click()">📁 Import JSON</button>
                 </div>
-                <p class="sync-note">If devices are out of sync, open Sync on the device with the correct data and hit "Push This Device → Cloud". All other devices will update instantly.</p>
+                <p class="sync-note">
+                    <strong>Update Prices &amp; GPU</strong> — applies latest researched prices (9600X→$180, RAM→$75–90, GPU→RX 9070 $499–549, PSU→$100–130, Storage→$300–500 ea) and keeps your purchased states &amp; URLs intact, then pushes to all devices.<br><br>
+                    <strong>Push This Device → Cloud</strong> — forces your current local data to all other devices.
+                </p>
             `;
         } else {
             panel.className = 'sync-panel open';
@@ -937,6 +957,24 @@
                 </div>
                 <p class="sync-note">Without Firebase, use the sync link or JSON export to move data between devices.</p>
             `;
+        }
+    }
+
+    function applyPriceUpdates() {
+        if (!confirm('Apply latest researched prices and GPU update? Purchased status, URLs, and part names are preserved.')) return;
+        const data = loadData();
+        ['currentPC', 'newPC'].forEach(section => {
+            if (!LATEST_PRICES[section]) return;
+            data[section].forEach(part => {
+                const update = LATEST_PRICES[section][part.name];
+                if (update) Object.assign(part, update);
+            });
+        });
+        saveData(data);
+        renderParts();
+        showToast('✅ Prices & GPU updated — pushing to cloud…');
+        if (FIREBASE_ENABLED && dataRef) {
+            dataRef.set(data).then(() => showToast('☁️ All devices updated'));
         }
     }
 
