@@ -624,7 +624,12 @@
         // Real-time listener — update all devices instantly
         dataRef.on('value', snapshot => {
             const val = snapshot.val();
-            if (!val) return;
+            if (!val) {
+                // Firebase is empty — push whatever is in localStorage to initialize it
+                const local = localStorage.getItem('pcPartsData');
+                if (local) dataRef.set(JSON.parse(local));
+                return;
+            }
             localStorage.setItem('pcPartsData', JSON.stringify(val));
             // Don't clobber an input the user is actively typing in
             if (document.activeElement && document.activeElement.tagName === 'INPUT') {
@@ -909,10 +914,11 @@
                     : 'Firebase is configured — waiting for connection. Changes are saved locally until the connection is restored.'
                 }</p>
                 <div class="sync-actions">
+                    <button class="btn btn-primary btn-sm" onclick="pushToCloud()">☁️ Push This Device → Cloud</button>
                     <button class="btn btn-secondary btn-sm" onclick="exportToFile()">💾 Download JSON backup</button>
                     <button class="btn btn-secondary btn-sm" onclick="document.getElementById('importFile').click()">📁 Import JSON</button>
                 </div>
-                <p class="sync-note">Data path: <code>pcTracker/data</code> in your Realtime Database.</p>
+                <p class="sync-note">If devices are out of sync, open Sync on the device with the correct data and hit "Push This Device → Cloud". All other devices will update instantly.</p>
             `;
         } else {
             panel.className = 'sync-panel open';
@@ -932,6 +938,16 @@
                 <p class="sync-note">Without Firebase, use the sync link or JSON export to move data between devices.</p>
             `;
         }
+    }
+
+    function pushToCloud() {
+        if (!FIREBASE_ENABLED || !dataRef) return;
+        const data = loadData();
+        dataRef.set(data).then(() => {
+            showToast('☁️ Pushed to cloud — all devices will update');
+        }).catch(() => {
+            showToast('❌ Push failed — check connection');
+        });
     }
 
     function exportShareLink() {
