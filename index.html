@@ -13,6 +13,9 @@
     <meta name="twitter:title" content="PC Build Parts Tracker" />
     <meta name="twitter:description" content="Track PC build components, compare current and target prices, and monitor your build progress." />
     <title>PC Parts Tracker</title>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
     <style>
         :root {
             --primary:        #2563eb;
@@ -465,6 +468,46 @@
             padding: 4px 14px;
         }
 
+        /* ── CONNECTION DOT ─────────────────────────────── */
+        .conn-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--text-light);
+            display: inline-block;
+            flex-shrink: 0;
+            transition: background 0.4s ease;
+        }
+        .conn-dot.online  { background: var(--accent); box-shadow: 0 0 0 2px var(--accent-light); }
+        .conn-dot.offline { background: var(--warning); }
+        .conn-dot.disabled { background: var(--text-light); }
+
+        /* ── SYNC PANEL VARIANTS ─────────────────────────── */
+        .sync-panel.firebase-live {
+            border-color: var(--accent-border);
+            background: var(--accent-light);
+        }
+        .sync-panel.firebase-live .sync-panel-title { color: var(--accent-dark); }
+        .sync-note {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 10px;
+            line-height: 1.5;
+        }
+        .sync-code {
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 12px;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xs);
+            padding: 10px 14px;
+            margin: 10px 0;
+            white-space: pre-wrap;
+            word-break: break-all;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
         /* ── RESPONSIVE ──────────────────────────────────── */
         @media (max-width: 900px) {
             .builds-grid { grid-template-columns: 1fr; }
@@ -496,23 +539,18 @@
         </div>
         <div class="header-actions">
             <button id="modeToggle" class="btn btn-secondary btn-sm" onclick="toggleMode()">View Mode</button>
-            <button class="btn btn-ghost btn-sm" onclick="toggleSync()" title="Cross-device sync">⇄ Sync</button>
+            <button class="btn btn-ghost btn-sm" onclick="toggleSync()" id="syncBtn" title="Sync settings">
+                <span class="conn-dot disabled" id="connDot"></span>
+                Sync
+            </button>
         </div>
     </div>
 </header>
 
 <main class="main">
 
-    <!-- Sync Panel -->
-    <div class="sync-panel" id="syncPanel">
-        <div class="sync-panel-title">⇄ Cross-Device Sync</div>
-        <p>Export a sync link on this device and open it on your other device — your data loads automatically. After loading, changes save locally on each device; re-export to sync again.</p>
-        <div class="sync-actions">
-            <button class="btn btn-primary btn-sm" onclick="exportShareLink()">📋 Copy Sync Link</button>
-            <button class="btn btn-secondary btn-sm" onclick="exportToFile()">💾 Download JSON</button>
-            <button class="btn btn-secondary btn-sm" onclick="document.getElementById('importFile').click()">📁 Import JSON</button>
-        </div>
-    </div>
+    <!-- Sync Panel — content is set dynamically by renderSyncPanel() -->
+    <div class="sync-panel" id="syncPanel"></div>
 
     <!-- Stats -->
     <div class="stats-bar">
@@ -552,6 +590,82 @@
 <input type="file" id="importFile" accept=".json" style="display:none" onchange="handleImportFile(event)">
 
 <script>
+    // ══════════════════════════════════════════════════════
+    //  FIREBASE CONFIG
+    //  Paste your Firebase project config here to enable
+    //  live real-time sync across all your devices.
+    //
+    //  Setup steps (takes ~5 min):
+    //  1. Go to https://console.firebase.google.com
+    //  2. Create a project (or use an existing one)
+    //  3. Add a Web App  →  copy the firebaseConfig object
+    //  4. Go to Build → Realtime Database → Create database
+    //     Choose "Start in test mode" (you can lock it down later)
+    //  5. Paste the values below and redeploy to Vercel
+    // ══════════════════════════════════════════════════════
+    const FIREBASE_CONFIG = {
+        apiKey:            "",
+        authDomain:        "",
+        databaseURL:       "",   // e.g. https://my-project-default-rtdb.firebaseio.com
+        projectId:         "",
+        storageBucket:     "",
+        messagingSenderId: "",
+        appId:             ""
+    };
+    // ══════════════════════════════════════════════════════
+
+    const FIREBASE_ENABLED = !!(FIREBASE_CONFIG.apiKey && FIREBASE_CONFIG.databaseURL);
+    let   dataRef     = null;
+    let   pendingRender = false;
+    let   writeTimer    = null;
+
+    if (FIREBASE_ENABLED) {
+        firebase.initializeApp(FIREBASE_CONFIG);
+        const db = firebase.database();
+        dataRef  = db.ref('pcTracker/data');
+
+        // Real-time listener — update all devices instantly
+        dataRef.on('value', snapshot => {
+            const val = snapshot.val();
+            if (!val) return;
+            localStorage.setItem('pcPartsData', JSON.stringify(val));
+            // Don't clobber an input the user is actively typing in
+            if (document.activeElement && document.activeElement.tagName === 'INPUT') {
+                pendingRender = true;
+            } else {
+                renderParts();
+            }
+        });
+
+        // Flush pending render when focus leaves an input
+        document.addEventListener('blur', () => {
+            if (pendingRender) { pendingRender = false; renderParts(); }
+        }, true);
+
+        // Connection status dot
+        db.ref('.info/connected').on('value', snap => {
+            setConnected(snap.val() === true);
+        });
+    }
+
+    function setConnected(online) {
+        const dot = document.getElementById('connDot');
+        if (!dot) return;
+        dot.className = 'conn-dot ' + (FIREBASE_ENABLED ? (online ? 'online' : 'offline') : 'disabled');
+        dot.title = FIREBASE_ENABLED
+            ? (online ? 'Live sync active — all devices in sync' : 'Reconnecting…')
+            : 'Firebase not configured';
+        renderSyncPanel();
+    }
+
+    function writeToFirebase(data) {
+        if (!FIREBASE_ENABLED || !dataRef) return;
+        clearTimeout(writeTimer);
+        writeTimer = setTimeout(() => {
+            dataRef.set(data).catch(() => showToast('⚠️ Cloud save failed — saved locally'));
+        }, 400);
+    }
+
     let isViewMode = false;
 
     // ── DEFAULT DATA ────────────────────────────────────
@@ -589,6 +703,7 @@
 
     function saveData(data) {
         localStorage.setItem('pcPartsData', JSON.stringify(data));
+        writeToFirebase(data);
         updateStats(data);
     }
 
@@ -739,6 +854,7 @@
     function resetToDefaults() {
         if (!confirm('Reset all data to defaults? This cannot be undone.')) return;
         localStorage.removeItem('pcPartsData');
+        if (FIREBASE_ENABLED && dataRef) dataRef.remove();
         renderParts();
         showToast('Reset to defaults');
     }
@@ -776,6 +892,48 @@
     function toggleSync() {
         const panel = document.getElementById('syncPanel');
         panel.classList.toggle('open');
+        if (panel.classList.contains('open')) renderSyncPanel();
+    }
+
+    function renderSyncPanel() {
+        const panel = document.getElementById('syncPanel');
+        if (!panel.classList.contains('open')) return;
+
+        const dot   = document.getElementById('connDot');
+        const online = dot && dot.classList.contains('online');
+
+        if (FIREBASE_ENABLED) {
+            panel.className = 'sync-panel open' + (online ? ' firebase-live' : '');
+            panel.innerHTML = `
+                <div class="sync-panel-title">${online ? '🟢 Live Sync Active' : '🟡 Connecting…'}</div>
+                <p>${online
+                    ? 'Firebase Realtime Database is connected. Every change you make here appears instantly on all your other devices.'
+                    : 'Firebase is configured — waiting for connection. Changes are saved locally until the connection is restored.'
+                }</p>
+                <div class="sync-actions">
+                    <button class="btn btn-secondary btn-sm" onclick="exportToFile()">💾 Download JSON backup</button>
+                    <button class="btn btn-secondary btn-sm" onclick="document.getElementById('importFile').click()">📁 Import JSON</button>
+                </div>
+                <p class="sync-note">Data path: <code>pcTracker/data</code> in your Realtime Database.</p>
+            `;
+        } else {
+            panel.className = 'sync-panel open';
+            panel.innerHTML = `
+                <div class="sync-panel-title">⇄ Enable Live Sync</div>
+                <p>Add your Firebase config to the top of <code>index.html</code> to get always-on, real-time sync across all devices. Takes about 5 minutes to set up.</p>
+                <div class="sync-code">1. console.firebase.google.com → New project
+2. Add a Web App → copy the firebaseConfig object
+3. Build → Realtime Database → Create database (test mode)
+4. Paste the config values into FIREBASE_CONFIG in index.html
+5. Redeploy to Vercel → done</div>
+                <div class="sync-actions">
+                    <button class="btn btn-primary btn-sm" onclick="exportShareLink()">📋 Copy Sync Link (manual)</button>
+                    <button class="btn btn-secondary btn-sm" onclick="exportToFile()">💾 Download JSON</button>
+                    <button class="btn btn-secondary btn-sm" onclick="document.getElementById('importFile').click()">📁 Import JSON</button>
+                </div>
+                <p class="sync-note">Without Firebase, use the sync link or JSON export to move data between devices.</p>
+            `;
+        }
     }
 
     function exportShareLink() {
@@ -854,6 +1012,7 @@
     function escAttr(str) { return escHtml(str); }
 
     // ── BOOT ────────────────────────────────────────────
+    setConnected(false);   // initializes dot to correct state before Firebase responds
     loadFromHash();
     renderParts();
 </script>
