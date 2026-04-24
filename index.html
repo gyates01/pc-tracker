@@ -20,30 +20,30 @@
         :root {
             --primary:        #60a5fa;
             --primary-dark:   #3b82f6;
-            --primary-light:  rgba(96, 165, 250, 0.12);
-            --primary-border: rgba(96, 165, 250, 0.25);
-            --accent:         #34d399;
-            --accent-dark:    #10b981;
-            --accent-light:   rgba(52, 211, 153, 0.12);
-            --accent-border:  rgba(52, 211, 153, 0.25);
-            --warning:        #fbbf24;
+            --primary-light:  rgba(96, 165, 250, 0.1);
+            --primary-border: rgba(96, 165, 250, 0.2);
+            --accent:         #4ade80;
+            --accent-dark:    #22c55e;
+            --accent-light:   rgba(74, 222, 128, 0.1);
+            --accent-border:  rgba(74, 222, 128, 0.2);
+            --warning:        #fb923c;
             --danger:         #f87171;
             --danger-dark:    #ef4444;
-            --bg:             #0f172a;
-            --surface:        #1e293b;
-            --surface-2:      #293548;
-            --border:         #334155;
-            --border-hover:   #475569;
-            --text:           #f1f5f9;
-            --text-muted:     #94a3b8;
-            --text-light:     #64748b;
-            --shadow-sm:      0 1px 2px rgba(0,0,0,0.4);
-            --shadow:         0 1px 3px rgba(0,0,0,0.5), 0 1px 2px rgba(0,0,0,0.4);
-            --shadow-md:      0 4px 6px -1px rgba(0,0,0,0.5), 0 2px 4px -1px rgba(0,0,0,0.4);
-            --shadow-lg:      0 10px 15px -3px rgba(0,0,0,0.6), 0 4px 6px -2px rgba(0,0,0,0.4);
-            --radius:         12px;
-            --radius-sm:      8px;
-            --radius-xs:      6px;
+            --bg:             #111111;
+            --surface:        #1c1c1c;
+            --surface-2:      #242424;
+            --border:         #2e2e2e;
+            --border-hover:   #3e3e3e;
+            --text:           #f5f5f5;
+            --text-muted:     #a0a0a0;
+            --text-light:     #666666;
+            --shadow-sm:      0 1px 3px rgba(0,0,0,0.5);
+            --shadow:         0 2px 6px rgba(0,0,0,0.5);
+            --shadow-md:      0 4px 12px rgba(0,0,0,0.6);
+            --shadow-lg:      0 8px 24px rgba(0,0,0,0.7);
+            --radius:         14px;
+            --radius-sm:      10px;
+            --radius-xs:      7px;
             --transition:     all 0.2s ease;
         }
 
@@ -101,18 +101,19 @@
 
         .header-title { flex: 1; min-width: 0; }
         .header-title h1 {
-            font-size: 17px;
-            font-weight: 700;
+            font-size: 20px;
+            font-weight: 800;
             color: var(--text);
             line-height: 1.2;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            letter-spacing: -0.3px;
         }
         .header-title p {
-            font-size: 12px;
+            font-size: 13px;
             color: var(--text-muted);
-            margin-top: 1px;
+            margin-top: 2px;
         }
 
         .header-actions { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
@@ -132,15 +133,15 @@
             gap: 6px;
             font-family: inherit;
         }
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-primary:hover { background: var(--primary-dark); }
+        .btn-primary { background: #ffffff; color: #111111; font-weight: 700; }
+        .btn-primary:hover { background: #e5e5e5; }
 
         .btn-secondary {
-            background: var(--surface-2);
+            background: transparent;
             color: var(--text);
             border: 1px solid var(--border);
         }
-        .btn-secondary:hover { border-color: var(--primary); color: var(--primary); }
+        .btn-secondary:hover { border-color: var(--border-hover); background: var(--surface-2); }
 
         .btn-ghost { background: transparent; color: var(--text-muted); border: 1px solid transparent; }
         .btn-ghost:hover { background: var(--surface-2); border-color: var(--border); color: var(--text); }
@@ -193,16 +194,18 @@
         .stat-card {
             background: var(--surface);
             border: 1px solid var(--border);
+            border-top: 3px solid var(--card-accent, var(--primary));
             border-radius: var(--radius-sm);
-            padding: 16px 20px;
-            box-shadow: var(--shadow-sm);
+            padding: 18px 20px;
+            box-shadow: var(--shadow);
             transition: var(--transition);
             cursor: default;
         }
         .stat-card:hover {
             box-shadow: var(--shadow-md);
-            transform: translateY(-2px);
-            border-color: var(--primary-border);
+            transform: translateY(-3px);
+            border-color: var(--border-hover);
+            border-top-color: var(--card-accent, var(--primary));
         }
         .stat-label {
             font-size: 11px;
@@ -215,10 +218,10 @@
         .stat-value {
             font-size: 26px;
             font-weight: 700;
-            color: var(--primary);
+            color: var(--card-accent, var(--primary));
             line-height: 1;
         }
-        .stat-value.savings { color: var(--accent); }
+        .stat-value.savings { color: var(--card-accent, var(--accent)); }
 
         /* ── BUILDS GRID ─────────────────────────────────── */
         .builds-grid {
@@ -231,6 +234,7 @@
         .section-card {
             background: var(--surface);
             border: 1px solid var(--border);
+            border-top: 3px solid var(--card-accent, var(--primary));
             border-radius: var(--radius);
             box-shadow: var(--shadow);
             transition: var(--transition);
@@ -238,45 +242,38 @@
         }
         .section-card:hover {
             box-shadow: var(--shadow-lg);
-            border-color: var(--primary-border);
-            transform: translateY(-2px);
+            border-color: var(--border-hover);
+            border-top-color: var(--card-accent, var(--primary));
+            transform: translateY(-3px);
         }
         .section-full { grid-column: 1 / -1; }
 
         .section-header {
-            padding: 16px 20px 14px;
+            padding: 18px 22px 15px;
             border-bottom: 1px solid var(--border);
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
         .section-title {
-            font-size: 15px;
+            font-size: 16px;
             font-weight: 700;
             color: var(--text);
             display: flex;
             align-items: center;
-            gap: 8px;
-        }
-        .section-title::before {
-            content: '';
-            display: block;
-            width: 3px;
-            height: 16px;
-            background: var(--primary);
-            border-radius: 2px;
-            flex-shrink: 0;
+            gap: 10px;
         }
         .section-badge {
             font-size: 11px;
             font-weight: 600;
-            padding: 2px 8px;
-            background: var(--primary-light);
-            color: var(--primary);
+            padding: 2px 9px;
+            background: var(--surface-2);
+            color: var(--text-muted);
             border-radius: 20px;
+            border: 1px solid var(--border);
         }
 
-        .section-body { padding: 16px 20px; }
+        .section-body { padding: 18px 22px; }
 
         /* ── PART ITEMS ──────────────────────────────────── */
         .part-item {
@@ -291,15 +288,15 @@
         .part-item:last-child { margin-bottom: 0; }
 
         .part-item:hover {
-            border-color: var(--primary-border);
-            border-left-color: var(--primary);
-            background: var(--primary-light);
+            border-color: var(--border-hover);
+            border-left-color: var(--card-accent, var(--primary));
+            background: var(--surface-2);
             box-shadow: var(--shadow-sm);
         }
         .part-item.purchased {
-            border-left-color: var(--accent);
-            background: var(--accent-light);
-            border-color: var(--accent-border);
+            border-left-color: var(--accent-dark);
+            background: rgba(74, 222, 128, 0.06);
+            border-color: rgba(74, 222, 128, 0.18);
         }
         .part-item.purchased:hover { box-shadow: var(--shadow-sm); }
 
@@ -355,7 +352,7 @@
 
         /* ── PURCHASED TOGGLE ────────────────────────────── */
         .purchased-toggle {
-            background: var(--surface);
+            background: transparent;
             color: var(--text-muted);
             padding: 3px 10px;
             border-radius: 20px;
@@ -368,8 +365,8 @@
             flex-shrink: 0;
             font-family: inherit;
         }
-        .purchased-toggle:hover { border-color: var(--accent); color: var(--accent-dark); }
-        .purchased-toggle.active { background: var(--accent); color: white; border-color: var(--accent); }
+        .purchased-toggle:hover { border-color: var(--accent-dark); color: var(--accent); }
+        .purchased-toggle.active { background: var(--accent-dark); color: #111; border-color: var(--accent-dark); font-weight: 700; }
 
         /* ── VIEW MODE ───────────────────────────────────── */
         .part-view-row {
@@ -554,19 +551,19 @@
 
     <!-- Stats -->
     <div class="stats-bar">
-        <div class="stat-card">
+        <div class="stat-card" style="--card-accent: #60a5fa">
             <div class="stat-label">Purchased</div>
             <div class="stat-value" id="itemsCount">0/0</div>
         </div>
-        <div class="stat-card">
+        <div class="stat-card" style="--card-accent: #4ade80">
             <div class="stat-label">Already Spent</div>
             <div class="stat-value" id="totalSpent">$0</div>
         </div>
-        <div class="stat-card">
+        <div class="stat-card" style="--card-accent: #fb923c">
             <div class="stat-label">Remaining (Est.)</div>
             <div class="stat-value" id="totalRemaining">$0</div>
         </div>
-        <div class="stat-card">
+        <div class="stat-card" style="--card-accent: #c084fc">
             <div class="stat-label">Total Savings</div>
             <div class="stat-value savings" id="totalSavings">$0</div>
         </div>
@@ -716,14 +713,14 @@
         const sorted = key => [...data[key]].sort((a, b) => a.purchased - b.purchased);
 
         if (isViewMode) {
-            container.appendChild(makeSectionCard('Current PC', sorted('currentPC'), renderPartsView));
-            container.appendChild(makeSectionCard('New PC Build', sorted('newPC'), renderPartsView));
-            const periphCard = makeSectionCard('Peripherals', sorted('peripherals'), renderPartsView, true);
+            container.appendChild(makeSectionCard('Current PC', sorted('currentPC'), renderPartsView, false, '#60a5fa'));
+            container.appendChild(makeSectionCard('New PC Build', sorted('newPC'), renderPartsView, false, '#4ade80'));
+            const periphCard = makeSectionCard('Peripherals', sorted('peripherals'), renderPartsView, true, '#fb923c');
             container.appendChild(periphCard);
         } else {
-            container.appendChild(makeSectionCard('Current PC', sorted('currentPC'), (parts) => renderPartsEdit(parts, data.currentPC, 'currentPC')));
-            container.appendChild(makeSectionCard('New PC Build', sorted('newPC'), (parts) => renderPartsEdit(parts, data.newPC, 'newPC')));
-            const periphCard = makeSectionCard('Peripherals', sorted('peripherals'), (parts) => renderPartsEdit(parts, data.peripherals, 'peripherals'), true);
+            container.appendChild(makeSectionCard('Current PC', sorted('currentPC'), (parts) => renderPartsEdit(parts, data.currentPC, 'currentPC'), false, '#60a5fa'));
+            container.appendChild(makeSectionCard('New PC Build', sorted('newPC'), (parts) => renderPartsEdit(parts, data.newPC, 'newPC'), false, '#4ade80'));
+            const periphCard = makeSectionCard('Peripherals', sorted('peripherals'), (parts) => renderPartsEdit(parts, data.peripherals, 'peripherals'), true, '#fb923c');
             // Add "Add Peripheral" button to section header
             const addBtn = document.createElement('button');
             addBtn.className = 'btn btn-primary btn-xs';
@@ -736,9 +733,10 @@
         updateStats(data);
     }
 
-    function makeSectionCard(title, parts, renderFn, fullWidth = false) {
+    function makeSectionCard(title, parts, renderFn, fullWidth = false, accent = '#60a5fa') {
         const card = document.createElement('div');
         card.className = 'section-card' + (fullWidth ? ' section-full' : '');
+        card.style.setProperty('--card-accent', accent);
 
         const badge = `<span class="section-badge">${parts.filter(p => p.purchased).length}/${parts.length}</span>`;
         card.innerHTML = `
