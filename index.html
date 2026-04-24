@@ -505,6 +505,180 @@
             line-height: 1.6;
         }
 
+        /* ── SECTION PROGRESS BAR ───────────────────────── */
+        .section-progress {
+            height: 3px;
+            background: var(--border);
+            overflow: hidden;
+        }
+        .section-progress-fill {
+            height: 100%;
+            background: var(--card-accent, var(--primary));
+            transition: width 0.6s ease;
+        }
+        .section-card.complete { border-top-color: var(--accent-dark) !important; }
+        .section-card.complete .section-header { background: rgba(74,222,128,0.04); }
+
+        /* ── PRICE COLORS ────────────────────────────────── */
+        .price-deal { color: var(--accent) !important; }
+        .price-savings-badge {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--accent-dark);
+            background: var(--accent-light);
+            border-radius: 20px;
+            padding: 1px 7px;
+            margin-top: 4px;
+        }
+
+        /* ── NEXT BUY STAR ───────────────────────────────── */
+        .next-buy-star {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+            line-height: 1;
+            padding: 0 2px;
+            opacity: 0.25;
+            transition: opacity 0.2s, transform 0.15s;
+            flex-shrink: 0;
+        }
+        .next-buy-star:hover { opacity: 0.6; transform: scale(1.2); }
+        .next-buy-star.active { opacity: 1; }
+        .next-buy-badge {
+            font-size: 10px;
+            font-weight: 700;
+            color: #fbbf24;
+            background: rgba(251,191,36,0.12);
+            border-radius: 20px;
+            padding: 1px 7px;
+            letter-spacing: 0.3px;
+        }
+
+        /* ── NOTES ───────────────────────────────────────── */
+        .notes-toggle {
+            font-size: 11px;
+            color: var(--text-light);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            margin-top: 8px;
+            font-family: inherit;
+            transition: color 0.15s;
+            display: block;
+        }
+        .notes-toggle:hover { color: var(--text-muted); }
+        .notes-area { margin-top: 6px; display: none; }
+        .notes-area.open { display: block; }
+        .notes-area textarea {
+            width: 100%;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xs);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 12px;
+            padding: 8px 10px;
+            resize: vertical;
+            min-height: 56px;
+            transition: border-color 0.15s;
+            box-sizing: border-box;
+        }
+        .notes-area textarea:focus { outline: none; border-color: var(--primary); }
+        .notes-view {
+            margin-top: 5px;
+            font-size: 12px;
+            color: var(--text-muted);
+            font-style: italic;
+            padding: 5px 9px;
+            background: var(--surface-2);
+            border-radius: var(--radius-xs);
+            border-left: 2px solid var(--border);
+        }
+
+        /* ── PRICE HISTORY ───────────────────────────────── */
+        .history-toggle {
+            font-size: 11px;
+            color: var(--text-light);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            margin-top: 4px;
+            font-family: inherit;
+            transition: color 0.15s;
+            display: block;
+        }
+        .history-toggle:hover { color: var(--text-muted); }
+        .price-history { margin-top: 6px; display: none; }
+        .price-history.open { display: block; }
+        .price-history-entry {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--text-light);
+            padding: 3px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .price-history-entry:last-child { border-bottom: none; }
+
+        /* ── BUDGET ROW ──────────────────────────────────── */
+        .budget-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .budget-label { font-size: 13px; color: var(--text-muted); }
+        .budget-input-wrap {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+        .budget-input-wrap input {
+            width: 85px;
+            padding: 5px 8px;
+            font-size: 13px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xs);
+            color: var(--text);
+            font-family: inherit;
+        }
+        .budget-input-wrap input:focus { outline: none; border-color: var(--primary); }
+        .budget-estimate {
+            font-size: 13px;
+            color: var(--text-muted);
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 4px 14px;
+            transition: var(--transition);
+        }
+        .budget-estimate.active { color: var(--primary); border-color: var(--primary-border); }
+
+        /* ── COUNTER ANIM ────────────────────────────────── */
+        @keyframes pop { 0%,100%{transform:scale(1)} 50%{transform:scale(1.06)} }
+        .stat-pop { animation: pop 0.35s ease; }
+
+        /* ── SHARE VIEW ──────────────────────────────────── */
+        .share-banner {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 10px 18px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
         /* ── RESPONSIVE ──────────────────────────────────── */
         @media (max-width: 900px) {
             .builds-grid { grid-template-columns: 1fr; }
@@ -569,9 +743,21 @@
         </div>
     </div>
 
+    <!-- Share mode banner (hidden unless ?share=1) -->
+    <div class="share-banner" id="shareBanner" style="display:none">
+        👁 Read-only view — <a href="javascript:void(0)" onclick="document.getElementById('shareBanner').style.display='none';isShareMode=false;renderParts();" style="color:var(--primary)">switch to edit mode</a>
+    </div>
+
     <!-- Mode pill -->
     <div class="mode-bar">
         <span class="mode-pill" id="modePill">✏️ Edit Mode — click fields to edit, changes auto-save</span>
+    </div>
+
+    <!-- Budget row -->
+    <div class="budget-row">
+        <span class="budget-label">Monthly budget</span>
+        <span class="budget-input-wrap">$<input type="number" id="monthlyBudgetInput" placeholder="e.g. 200" min="1" oninput="updateMonthlyBudget(this.value)"></span>
+        <span class="budget-estimate" id="budgetEstimate">Set a budget to see estimated completion</span>
     </div>
 
     <!-- Parts grid -->
@@ -589,16 +775,6 @@
 <script>
     // ══════════════════════════════════════════════════════
     //  FIREBASE CONFIG
-    //  Paste your Firebase project config here to enable
-    //  live real-time sync across all your devices.
-    //
-    //  Setup steps (takes ~5 min):
-    //  1. Go to https://console.firebase.google.com
-    //  2. Create a project (or use an existing one)
-    //  3. Add a Web App  →  copy the firebaseConfig object
-    //  4. Go to Build → Realtime Database → Create database
-    //     Choose "Start in test mode" (you can lock it down later)
-    //  5. Paste the values below and redeploy to Vercel
     // ══════════════════════════════════════════════════════
     const FIREBASE_CONFIG = {
         apiKey:            "AIzaSyCecV5p1pZJsZCU6jV1DDocyzEz5LM28p0",
@@ -609,7 +785,6 @@
         messagingSenderId: "440236448073",
         appId:             "1:440236448073:web:360783b3228ddc7411a298"
     };
-    // ══════════════════════════════════════════════════════
 
     const FIREBASE_ENABLED = !!(FIREBASE_CONFIG.apiKey && FIREBASE_CONFIG.databaseURL);
     let   dataRef     = null;
@@ -621,17 +796,14 @@
         const db = firebase.database();
         dataRef  = db.ref('pcTracker/data');
 
-        // Real-time listener — update all devices instantly
         dataRef.on('value', snapshot => {
             const val = snapshot.val();
             if (!val) {
-                // Firebase is empty — push whatever is in localStorage to initialize it
                 const local = localStorage.getItem('pcPartsData');
                 if (local) dataRef.set(JSON.parse(local));
                 return;
             }
             localStorage.setItem('pcPartsData', JSON.stringify(val));
-            // Don't clobber an input the user is actively typing in
             if (document.activeElement && document.activeElement.tagName === 'INPUT') {
                 pendingRender = true;
             } else {
@@ -639,12 +811,10 @@
             }
         });
 
-        // Flush pending render when focus leaves an input
         document.addEventListener('blur', () => {
             if (pendingRender) { pendingRender = false; renderParts(); }
         }, true);
 
-        // Connection status dot
         db.ref('.info/connected').on('value', snap => {
             setConnected(snap.val() === true);
         });
@@ -668,39 +838,42 @@
         }, 400);
     }
 
-    let isViewMode = false;
+    let isViewMode  = false;
+    let isShareMode = false;
+
+    // Detect read-only share mode via ?share=1 URL param
+    if (new URLSearchParams(location.search).get('share') === '1') {
+        isShareMode = true;
+        isViewMode  = true;
+    }
 
     // ── DEFAULT DATA ────────────────────────────────────
     const defaultData = {
         currentPC: [
-            { name: 'CPU',        details: 'Ryzen 7 5700X',       price: 162,      originalPrice: null, purchased: false, url: '' },
-            { name: 'AIO Cooler', details: 'DI COOLING DX240',    price: 43,       originalPrice: 80,   purchased: true,  url: '' },
-            { name: 'RAM',        details: '2x8GB DDR4 3200MHz',  price: '30-50',  originalPrice: null, purchased: false, url: '' }
+            { name: 'CPU',        details: 'Ryzen 7 5700X',       price: 162,          originalPrice: null, purchased: false, url: '', notes: '', nextBuy: false, priceHistory: [] },
+            { name: 'AIO Cooler', details: 'DI COOLING DX240',    price: 43,           originalPrice: 80,   purchased: true,  url: '', notes: '', nextBuy: false, priceHistory: [] },
+            { name: 'RAM',        details: '2x8GB DDR4 3200MHz',  price: '30-50',      originalPrice: null, purchased: false, url: '', notes: '', nextBuy: false, priceHistory: [] }
         ],
         newPC: [
-            { name: 'CPU',         details: 'Ryzen 5 9600X',                          price: 180,         originalPrice: 280,  purchased: false, url: '' },
-            { name: 'Motherboard', details: 'MSI PRO B650-A WiFi',                    price: 135,         originalPrice: 210,  purchased: true,  url: '' },
-            { name: 'AIO Cooler',  details: 'DARKROCK D360',                          price: 50,          originalPrice: null, purchased: true,  url: '' },
-            { name: 'RAM',         details: '2x16GB DDR5 6000MHz (G.Skill Flare X5)', price: '75-90',     originalPrice: null, purchased: false, url: '' },
-            { name: 'GPU',         details: 'RX 9070 16GB | stretch: 9070 XT ~$649', price: '499-549',   originalPrice: null, purchased: false, url: '' },
-            { name: 'PSU',         details: '650W Modular (Corsair RM650x)',          price: '100-130',   originalPrice: null, purchased: false, url: '' },
-            { name: 'Storage',     details: '2TB NVMe x2 (⚠️ SSD shortage — prices up ~2x)', price: '300-500 ea', originalPrice: null, purchased: false, url: '' }
+            { name: 'CPU',         details: 'Ryzen 5 9600X',                                   price: 180,           originalPrice: 280,  purchased: false, url: '', notes: '', nextBuy: false, priceHistory: [] },
+            { name: 'Motherboard', details: 'MSI PRO B650-A WiFi',                             price: 135,           originalPrice: 210,  purchased: true,  url: '', notes: '', nextBuy: false, priceHistory: [] },
+            { name: 'AIO Cooler',  details: 'DARKROCK D360',                                   price: 50,            originalPrice: null, purchased: true,  url: '', notes: '', nextBuy: false, priceHistory: [] },
+            { name: 'RAM',         details: '2x16GB DDR5 6000MHz (G.Skill Flare X5)',          price: '75-90',       originalPrice: null, purchased: false, url: '', notes: '', nextBuy: false, priceHistory: [] },
+            { name: 'GPU',         details: 'RX 9070 16GB | stretch: 9070 XT ~$649',          price: '499-549',     originalPrice: null, purchased: false, url: '', notes: '', nextBuy: false, priceHistory: [] },
+            { name: 'PSU',         details: '650W Modular (Corsair RM650x)',                   price: '100-130',     originalPrice: null, purchased: false, url: '', notes: '', nextBuy: false, priceHistory: [] },
+            { name: 'Storage',     details: '2TB NVMe x2 (⚠️ SSD shortage — prices up ~2x)', price: '300-500 ea',  originalPrice: null, purchased: false, url: '', notes: '', nextBuy: false, priceHistory: [] }
         ],
         peripherals: []
     };
 
-    // Latest researched prices — applied via "Update Prices" button without touching
-    // purchased states, custom URLs, or any other user-edited fields.
     const LATEST_PRICES = {
-        currentPC: {
-            'RAM': { price: '30-50' }
-        },
+        currentPC: { 'RAM': { price: '30-50' } },
         newPC: {
             'CPU':         { price: 180 },
             'Motherboard': { price: 135 },
-            'RAM':         { price: '75-90',   details: '2x16GB DDR5 6000MHz (G.Skill Flare X5)' },
-            'GPU':         { price: '499-549', details: 'RX 9070 16GB | stretch: 9070 XT ~$649' },
-            'PSU':         { price: '100-130', details: '650W Modular (Corsair RM650x)' },
+            'RAM':         { price: '75-90',      details: '2x16GB DDR5 6000MHz (G.Skill Flare X5)' },
+            'GPU':         { price: '499-549',    details: 'RX 9070 16GB | stretch: 9070 XT ~$649' },
+            'PSU':         { price: '100-130',    details: '650W Modular (Corsair RM650x)' },
             'Storage':     { price: '300-500 ea', details: '2TB NVMe x2 (⚠️ SSD shortage — prices up ~2x)' }
         }
     };
@@ -713,7 +886,10 @@
         if (!data.peripherals) data.peripherals = [];
         ['currentPC', 'newPC', 'peripherals'].forEach(key => {
             (data[key] || []).forEach(part => {
-                if (!part.hasOwnProperty('url')) part.url = '';
+                if (!part.hasOwnProperty('url'))          part.url = '';
+                if (!part.hasOwnProperty('notes'))        part.notes = '';
+                if (!part.hasOwnProperty('nextBuy'))      part.nextBuy = false;
+                if (!part.hasOwnProperty('priceHistory')) part.priceHistory = [];
             });
         });
         return data;
@@ -733,16 +909,14 @@
 
         const sorted = key => [...data[key]].sort((a, b) => a.purchased - b.purchased);
 
-        if (isViewMode) {
-            container.appendChild(makeSectionCard('Current PC', sorted('currentPC'), renderPartsView, false, '#60a5fa'));
-            container.appendChild(makeSectionCard('New PC Build', sorted('newPC'), renderPartsView, false, '#4ade80'));
-            const periphCard = makeSectionCard('Peripherals', sorted('peripherals'), renderPartsView, true, '#fb923c');
-            container.appendChild(periphCard);
+        if (isViewMode || isShareMode) {
+            container.appendChild(makeSectionCard('Current PC',   sorted('currentPC'),   renderPartsView, false, '#60a5fa'));
+            container.appendChild(makeSectionCard('New PC Build', sorted('newPC'),       renderPartsView, false, '#4ade80'));
+            container.appendChild(makeSectionCard('Peripherals',  sorted('peripherals'), renderPartsView, true,  '#fb923c'));
         } else {
-            container.appendChild(makeSectionCard('Current PC', sorted('currentPC'), (parts) => renderPartsEdit(parts, data.currentPC, 'currentPC'), false, '#60a5fa'));
-            container.appendChild(makeSectionCard('New PC Build', sorted('newPC'), (parts) => renderPartsEdit(parts, data.newPC, 'newPC'), false, '#4ade80'));
-            const periphCard = makeSectionCard('Peripherals', sorted('peripherals'), (parts) => renderPartsEdit(parts, data.peripherals, 'peripherals'), true, '#fb923c');
-            // Add "Add Peripheral" button to section header
+            container.appendChild(makeSectionCard('Current PC',   sorted('currentPC'),   parts => renderPartsEdit(parts, data.currentPC,   'currentPC'),   false, '#60a5fa'));
+            container.appendChild(makeSectionCard('New PC Build', sorted('newPC'),       parts => renderPartsEdit(parts, data.newPC,       'newPC'),       false, '#4ade80'));
+            const periphCard = makeSectionCard('Peripherals', sorted('peripherals'), parts => renderPartsEdit(parts, data.peripherals, 'peripherals'), true, '#fb923c');
             const addBtn = document.createElement('button');
             addBtn.className = 'btn btn-primary btn-xs';
             addBtn.textContent = '+ Add';
@@ -755,14 +929,21 @@
     }
 
     function makeSectionCard(title, parts, renderFn, fullWidth = false, accent = '#60a5fa') {
+        const purchasedCount = parts.filter(p => p.purchased).length;
+        const isComplete     = parts.length > 0 && purchasedCount === parts.length;
+        const pct            = parts.length ? Math.round(purchasedCount / parts.length * 100) : 0;
+
         const card = document.createElement('div');
-        card.className = 'section-card' + (fullWidth ? ' section-full' : '');
+        card.className = 'section-card' + (fullWidth ? ' section-full' : '') + (isComplete ? ' complete' : '');
         card.style.setProperty('--card-accent', accent);
 
-        const badge = `<span class="section-badge">${parts.filter(p => p.purchased).length}/${parts.length}</span>`;
+        const badge = `<span class="section-badge">${purchasedCount}/${parts.length}</span>`;
         card.innerHTML = `
             <div class="section-header">
                 <span class="section-title">${escHtml(title)} ${badge}</span>
+            </div>
+            <div class="section-progress">
+                <div class="section-progress-fill" style="width:${pct}%"></div>
             </div>
             <div class="section-body" id="body-${title.replace(/\s/g,'_')}"></div>
         `;
@@ -772,24 +953,35 @@
 
     function renderPartsView(parts) {
         if (!parts.length) return '<p class="empty-state">No items yet</p>';
-        return parts.map(part => `
+        return parts.map(part => {
+            const currentNum = parseFloat(String(part.price).split('-')[0]);
+            const origNum    = parseFloat(part.originalPrice);
+            const isDeal     = origNum && currentNum && origNum > currentNum;
+            const savings    = isDeal ? Math.round(origNum - currentNum) : 0;
+
+            return `
             <div class="part-item ${part.purchased ? 'purchased' : ''}">
                 <div class="part-view-row">
                     <div class="part-view-info">
-                        <div class="part-view-name">${escHtml(part.name)}</div>
+                        <div class="part-view-name">
+                            ${part.nextBuy ? '<span class="next-buy-badge">★ Next Buy</span> ' : ''}
+                            ${escHtml(part.name)}
+                        </div>
                         <div class="part-view-details">${escHtml(part.details)}</div>
                         ${part.url ? `<a href="${escAttr(part.url)}" target="_blank" rel="noopener" class="part-view-link">🔗 View Product</a>` : ''}
                         ${part.purchased ? '<div><span class="purchased-badge">PURCHASED</span></div>' : ''}
+                        ${part.notes ? `<div class="notes-view">${escHtml(part.notes)}</div>` : ''}
                     </div>
                     <div class="part-view-price">
                         ${part.price
-                            ? `<span class="price-current">$${escHtml(String(part.price))}</span>`
+                            ? `<span class="price-current${isDeal ? ' price-deal' : ''}">$${escHtml(String(part.price))}</span>`
                             : `<span class="price-tbd">TBD</span>`}
                         ${part.originalPrice ? `<span class="price-original">$${escHtml(String(part.originalPrice))}</span>` : ''}
+                        ${isDeal ? `<div><span class="price-savings-badge">Save $${savings}</span></div>` : ''}
                     </div>
                 </div>
-            </div>
-        `).join('');
+            </div>`;
+        }).join('');
     }
 
     function renderPartsEdit(sortedParts, originalParts, buildType) {
@@ -797,12 +989,23 @@
         if (!sortedParts.length) return '';
         return sortedParts.map(part => {
             const idx = originalParts.indexOf(part);
+
+            const historyHTML = (part.priceHistory && part.priceHistory.length)
+                ? `<button class="history-toggle" onclick="this.nextElementSibling.classList.toggle('open')">📊 Price history (${part.priceHistory.length})</button>
+                   <div class="price-history">${part.priceHistory.slice().reverse().map(h =>
+                       `<div class="price-history-entry"><span>${h.date}</span><span>$${escHtml(String(h.price))}</span></div>`
+                   ).join('')}</div>`
+                : '';
+
             const removeBtn = buildType === 'peripherals'
                 ? `<button class="btn btn-danger btn-xs" style="margin-top:10px" onclick="removePeripheral(${idx})">Remove</button>`
                 : '';
+
             return `
             <div class="part-item ${part.purchased ? 'purchased' : ''}">
                 <div class="part-header">
+                    <button class="next-buy-star ${part.nextBuy ? 'active' : ''}" title="Mark as next to buy"
+                            onclick="toggleNextBuy('${buildType}', ${idx})">★</button>
                     <input type="text" class="part-name-input" value="${escAttr(part.name)}"
                            onchange="updatePart('${buildType}', ${idx}, 'name', this.value)">
                     <button class="purchased-toggle ${part.purchased ? 'active' : ''}"
@@ -831,6 +1034,14 @@
                                onchange="updatePart('${buildType}', ${idx}, 'originalPrice', this.value)">
                     </div>
                 </div>
+                ${historyHTML}
+                <button class="notes-toggle" onclick="this.nextElementSibling.classList.toggle('open')">
+                    📝 Notes${part.notes ? ' (1)' : ''}
+                </button>
+                <div class="notes-area${part.notes ? ' open' : ''}">
+                    <textarea placeholder="Add notes, links, comparisons…"
+                              onchange="updatePart('${buildType}', ${idx}, 'notes', this.value)">${escHtml(part.notes || '')}</textarea>
+                </div>
                 ${removeBtn}
             </div>`;
         }).join('');
@@ -840,7 +1051,17 @@
     function updatePart(buildType, index, field, value) {
         const data = loadData();
         if (field === 'price' || field === 'originalPrice') {
-            data[buildType][index][field] = value.trim() === '' ? null : value.trim();
+            const newVal = value.trim() === '' ? null : value.trim();
+            if (field === 'price' && newVal !== String(data[buildType][index].price ?? '')) {
+                if (!data[buildType][index].priceHistory) data[buildType][index].priceHistory = [];
+                if (newVal) {
+                    data[buildType][index].priceHistory.push({
+                        price: newVal,
+                        date:  new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+                    });
+                }
+            }
+            data[buildType][index][field] = newVal;
         } else {
             data[buildType][index][field] = value;
         }
@@ -855,9 +1076,16 @@
         renderParts();
     }
 
+    function toggleNextBuy(buildType, index) {
+        const data = loadData();
+        data[buildType][index].nextBuy = !data[buildType][index].nextBuy;
+        saveData(data);
+        renderParts();
+    }
+
     function addPeripheral() {
         const data = loadData();
-        data.peripherals.push({ name: 'New Peripheral', details: 'Description', price: null, originalPrice: null, purchased: false, url: '' });
+        data.peripherals.push({ name: 'New Peripheral', details: 'Description', price: null, originalPrice: null, purchased: false, url: '', notes: '', nextBuy: false, priceHistory: [] });
         saveData(data);
         renderParts();
     }
@@ -873,7 +1101,11 @@
     function resetToDefaults() {
         if (!confirm('Reset all data to defaults? This cannot be undone.')) return;
         localStorage.removeItem('pcPartsData');
+        localStorage.removeItem('monthlyBudget');
         if (FIREBASE_ENABLED && dataRef) dataRef.remove();
+        const budgetInput = document.getElementById('monthlyBudgetInput');
+        if (budgetInput) budgetInput.value = '';
+        updateMonthlyBudget('', false);
         renderParts();
         showToast('Reset to defaults');
     }
@@ -888,6 +1120,18 @@
     }
 
     // ── STATS ───────────────────────────────────────────
+    function animateStat(id, newVal) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const changed = el.textContent !== newVal;
+        el.textContent = newVal;
+        if (changed) {
+            el.classList.remove('stat-pop');
+            void el.offsetWidth;
+            el.classList.add('stat-pop');
+        }
+    }
+
     function updateStats(data) {
         let spent = 0, remaining = 0, savings = 0, purchased = 0, total = 0;
         [...data.currentPC, ...data.newPC, ...data.peripherals].forEach(part => {
@@ -901,10 +1145,51 @@
                 remaining += price;
             }
         });
-        document.getElementById('itemsCount').textContent   = `${purchased}/${total}`;
-        document.getElementById('totalSpent').textContent   = `$${Math.round(spent)}`;
-        document.getElementById('totalRemaining').textContent = `$${Math.round(remaining)}`;
-        document.getElementById('totalSavings').textContent = `$${Math.round(savings)}`;
+        animateStat('itemsCount',     `${purchased}/${total}`);
+        animateStat('totalSpent',     `$${Math.round(spent)}`);
+        animateStat('totalRemaining', `$${Math.round(remaining)}`);
+        animateStat('totalSavings',   `$${Math.round(savings)}`);
+
+        const budgetInput = document.getElementById('monthlyBudgetInput');
+        if (budgetInput && budgetInput.value) updateMonthlyBudget(budgetInput.value, false);
+    }
+
+    // ── BUDGET TRACKER ──────────────────────────────────
+    function updateMonthlyBudget(val, persist = true) {
+        if (persist) localStorage.setItem('monthlyBudget', val);
+        const el = document.getElementById('budgetEstimate');
+        if (!el) return;
+        const budget = parseFloat(val);
+        if (!budget || budget <= 0) {
+            el.textContent = 'Set a budget to see estimated completion';
+            el.classList.remove('active');
+            return;
+        }
+        const data = loadData();
+        let remaining = 0;
+        [...data.currentPC, ...data.newPC, ...data.peripherals].forEach(part => {
+            if (!part.purchased) remaining += parseFloat(String(part.price).split('-')[0]) || 0;
+        });
+        if (remaining <= 0) {
+            el.textContent = '🎉 All items purchased!';
+            el.classList.add('active');
+            return;
+        }
+        const months  = Math.ceil(remaining / budget);
+        const finish  = new Date();
+        finish.setMonth(finish.getMonth() + months);
+        el.textContent = `~${months} month${months !== 1 ? 's' : ''} to complete (${finish.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })})`;
+        el.classList.add('active');
+    }
+
+    // ── SHARE LINK ──────────────────────────────────────
+    function generateShareLink() {
+        const url = location.origin + location.pathname + '?share=1';
+        navigator.clipboard.writeText(url).then(() => {
+            showToast('🔗 Share link copied — anyone with it can view your build');
+        }).catch(() => {
+            prompt('Copy this share link:', url);
+        });
     }
 
     // ── SYNC / IMPORT / EXPORT ──────────────────────────
@@ -918,7 +1203,7 @@
         const panel = document.getElementById('syncPanel');
         if (!panel.classList.contains('open')) return;
 
-        const dot   = document.getElementById('connDot');
+        const dot    = document.getElementById('connDot');
         const online = dot && dot.classList.contains('online');
 
         if (FIREBASE_ENABLED) {
@@ -930,28 +1215,30 @@
                     : 'Firebase is configured — waiting for connection. Changes are saved locally until the connection is restored.'
                 }</p>
                 <div class="sync-actions">
-                    <button class="btn btn-primary btn-sm" onclick="applyPriceUpdates()">🔄 Update Prices & GPU</button>
-                    <button class="btn btn-secondary btn-sm" onclick="pushToCloud()">☁️ Push This Device → Cloud</button>
-                    <button class="btn btn-secondary btn-sm" onclick="exportToFile()">💾 Download JSON</button>
-                    <button class="btn btn-secondary btn-sm" onclick="document.getElementById('importFile').click()">📁 Import JSON</button>
+                    <button class="btn btn-primary btn-sm"    onclick="applyPriceUpdates()">🔄 Update Prices &amp; GPU</button>
+                    <button class="btn btn-secondary btn-sm"  onclick="generateShareLink()">🔗 Share Build</button>
+                    <button class="btn btn-secondary btn-sm"  onclick="pushToCloud()">☁️ Push This Device → Cloud</button>
+                    <button class="btn btn-secondary btn-sm"  onclick="exportToFile()">💾 Download JSON</button>
+                    <button class="btn btn-secondary btn-sm"  onclick="document.getElementById('importFile').click()">📁 Import JSON</button>
                 </div>
                 <p class="sync-note">
-                    <strong>Update Prices &amp; GPU</strong> — applies latest researched prices (9600X→$180, RAM→$75–90, GPU→RX 9070 $499–549, PSU→$100–130, Storage→$300–500 ea) and keeps your purchased states &amp; URLs intact, then pushes to all devices.<br><br>
-                    <strong>Push This Device → Cloud</strong> — forces your current local data to all other devices.
+                    <strong>Update Prices &amp; GPU</strong> — applies latest researched prices and keeps your purchased states &amp; URLs intact.<br><br>
+                    <strong>Share Build</strong> — copies a read-only link anyone can open to view your tracker.<br><br>
+                    <strong>Push This Device → Cloud</strong> — forces your local data to all other devices.
                 </p>
             `;
         } else {
             panel.className = 'sync-panel open';
             panel.innerHTML = `
                 <div class="sync-panel-title">⇄ Enable Live Sync</div>
-                <p>Add your Firebase config to the top of <code>index.html</code> to get always-on, real-time sync across all devices. Takes about 5 minutes to set up.</p>
+                <p>Add your Firebase config to the top of <code>index.html</code> to get always-on, real-time sync across all devices.</p>
                 <div class="sync-code">1. console.firebase.google.com → New project
 2. Add a Web App → copy the firebaseConfig object
 3. Build → Realtime Database → Create database (test mode)
 4. Paste the config values into FIREBASE_CONFIG in index.html
 5. Redeploy to Vercel → done</div>
                 <div class="sync-actions">
-                    <button class="btn btn-primary btn-sm" onclick="exportShareLink()">📋 Copy Sync Link (manual)</button>
+                    <button class="btn btn-primary btn-sm"   onclick="exportShareLink()">📋 Copy Sync Link (manual)</button>
                     <button class="btn btn-secondary btn-sm" onclick="exportToFile()">💾 Download JSON</button>
                     <button class="btn btn-secondary btn-sm" onclick="document.getElementById('importFile').click()">📁 Import JSON</button>
                 </div>
@@ -981,11 +1268,9 @@
     function pushToCloud() {
         if (!FIREBASE_ENABLED || !dataRef) return;
         const data = loadData();
-        dataRef.set(data).then(() => {
-            showToast('☁️ Pushed to cloud — all devices will update');
-        }).catch(() => {
-            showToast('❌ Push failed — check connection');
-        });
+        dataRef.set(data)
+            .then(() => showToast('☁️ Pushed to cloud — all devices will update'))
+            .catch(() => showToast('❌ Push failed — check connection'));
     }
 
     function exportShareLink() {
@@ -1064,9 +1349,22 @@
     function escAttr(str) { return escHtml(str); }
 
     // ── BOOT ────────────────────────────────────────────
-    setConnected(false);   // initializes dot to correct state before Firebase responds
+    if (isShareMode) {
+        document.getElementById('shareBanner').style.display = 'block';
+        document.getElementById('modeToggle').style.display  = 'none';
+    }
+
+    const _savedBudget = localStorage.getItem('monthlyBudget');
+    if (_savedBudget) {
+        const _budgetInput = document.getElementById('monthlyBudgetInput');
+        if (_budgetInput) _budgetInput.value = _savedBudget;
+    }
+
+    setConnected(false);
     loadFromHash();
     renderParts();
+
+    if (_savedBudget) updateMonthlyBudget(_savedBudget, false);
 </script>
 </body>
 </html>
