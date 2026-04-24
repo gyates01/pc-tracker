@@ -14,461 +14,848 @@
     <meta name="twitter:description" content="Track PC build components, compare current and target prices, and monitor your build progress." />
     <title>PC Parts Tracker</title>
     <style>
+        :root {
+            --primary:        #2563eb;
+            --primary-dark:   #1d4ed8;
+            --primary-light:  #eff6ff;
+            --primary-border: #bfdbfe;
+            --accent:         #10b981;
+            --accent-dark:    #059669;
+            --accent-light:   #ecfdf5;
+            --accent-border:  #a7f3d0;
+            --warning:        #f59e0b;
+            --danger:         #ef4444;
+            --danger-dark:    #dc2626;
+            --bg:             #f0f4f8;
+            --surface:        #ffffff;
+            --surface-2:      #f8fafc;
+            --border:         #e2e8f0;
+            --border-hover:   #cbd5e1;
+            --text:           #1e293b;
+            --text-muted:     #64748b;
+            --text-light:     #94a3b8;
+            --shadow-sm:      0 1px 2px rgba(0,0,0,0.05);
+            --shadow:         0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+            --shadow-md:      0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -1px rgba(0,0,0,0.04);
+            --shadow-lg:      0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+            --radius:         12px;
+            --radius-sm:      8px;
+            --radius-xs:      6px;
+            --transition:     all 0.2s ease;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            max-width: 1200px;
-            margin: 40px auto;
-            padding: 20px;
-            background: #f5f5f5;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
         }
-        .container {
+
+        /* ── HEADER ─────────────────────────────────────── */
+        .site-header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+        }
+
+        .header-accent {
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary) 0%, #7c3aed 50%, var(--accent) 100%);
+        }
+
+        .header-inner {
+            max-width: 1240px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            height: 60px;
+        }
+
+        .back-link {
+            font-size: 13px;
+            color: var(--text-muted);
+            text-decoration: none;
+            padding: 6px 12px;
+            border-radius: var(--radius-xs);
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            transition: var(--transition);
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .back-link:hover {
+            color: var(--primary);
+            border-color: var(--primary-border);
+            background: var(--primary-light);
+        }
+
+        .header-title { flex: 1; min-width: 0; }
+        .header-title h1 {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text);
+            line-height: 1.2;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .header-title p {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 1px;
+        }
+
+        .header-actions { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+
+        /* ── BUTTONS ─────────────────────────────────────── */
+        .btn {
+            padding: 7px 14px;
+            border-radius: var(--radius-xs);
+            font-size: 13px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-family: inherit;
+        }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-dark); }
+
+        .btn-secondary {
+            background: var(--surface-2);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+        .btn-secondary:hover { border-color: var(--primary); color: var(--primary); }
+
+        .btn-ghost { background: transparent; color: var(--text-muted); border: 1px solid transparent; }
+        .btn-ghost:hover { background: var(--surface-2); border-color: var(--border); color: var(--text); }
+
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-danger:hover { background: var(--danger-dark); }
+
+        .btn-sm { padding: 5px 11px; font-size: 12px; }
+        .btn-xs { padding: 3px 9px; font-size: 11px; }
+
+        /* ── MAIN LAYOUT ─────────────────────────────────── */
+        .main {
+            max-width: 1240px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        /* ── SYNC PANEL ──────────────────────────────────── */
+        .sync-panel {
+            background: var(--surface);
+            border: 1px solid var(--primary-border);
+            border-radius: var(--radius-sm);
+            padding: 16px 20px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        .sync-panel.open { display: block; }
+        .sync-panel-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 6px;
+        }
+        .sync-panel p {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+        .sync-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+        /* ── STATS BAR ───────────────────────────────────── */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 16px 20px;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            cursor: default;
+        }
+        .stat-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+            border-color: var(--primary-border);
+        }
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            margin-bottom: 8px;
+        }
+        .stat-value {
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--primary);
+            line-height: 1;
+        }
+        .stat-value.savings { color: var(--accent); }
+
+        /* ── BUILDS GRID ─────────────────────────────────── */
+        .builds-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-bottom: 30px;
+            gap: 20px;
         }
-        .build-section {
-            background: white;
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+        /* ── SECTION CARD ────────────────────────────────── */
+        .section-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            overflow: hidden;
         }
-        h1 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 10px;
+        .section-card:hover {
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-border);
+            transform: translateY(-2px);
         }
-        .subtitle {
-            text-align: center;
-            color: #6b7280;
-            font-size: 14px;
-            margin-bottom: 30px;
+        .section-full { grid-column: 1 / -1; }
+
+        .section-header {
+            padding: 16px 20px 14px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
-        h2 {
-            color: #2563eb;
-            margin-top: 0;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #e5e7eb;
+        .section-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
+        .section-title::before {
+            content: '';
+            display: block;
+            width: 3px;
+            height: 16px;
+            background: var(--primary);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+        .section-badge {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 8px;
+            background: var(--primary-light);
+            color: var(--primary);
+            border-radius: 20px;
+        }
+
+        .section-body { padding: 16px 20px; }
+
+        /* ── PART ITEMS ──────────────────────────────────── */
         .part-item {
-            padding: 15px;
-            margin-bottom: 12px;
-            background: #f9fafb;
-            border-radius: 6px;
-            border-left: 4px solid #d1d5db;
+            padding: 12px 14px;
+            margin-bottom: 8px;
+            background: var(--surface-2);
+            border-radius: var(--radius-xs);
+            border: 1px solid var(--border);
+            border-left: 3px solid transparent;
+            transition: var(--transition);
+        }
+        .part-item:last-child { margin-bottom: 0; }
+
+        .part-item:hover {
+            border-color: var(--primary-border);
+            border-left-color: var(--primary);
+            background: var(--primary-light);
+            box-shadow: var(--shadow-sm);
         }
         .part-item.purchased {
-            border-left-color: #10b981;
-            background: #f0fdf4;
+            border-left-color: var(--accent);
+            background: var(--accent-light);
+            border-color: var(--accent-border);
         }
+        .part-item.purchased:hover { box-shadow: var(--shadow-sm); }
+
         .part-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 8px;
+            gap: 10px;
+            margin-bottom: 6px;
         }
-        .part-name {
-            font-weight: 600;
-            color: #1f2937;
-        }
+
+        /* ── INPUTS ──────────────────────────────────────── */
         input[type="text"], input[type="number"] {
-            border: 1px solid #d1d5db;
-            border-radius: 4px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xs);
             padding: 6px 10px;
-            font-size: 14px;
+            font-size: 13px;
             width: 100%;
-            box-sizing: border-box;
+            background: var(--surface);
+            color: var(--text);
+            transition: border-color 0.15s, box-shadow 0.15s;
+            font-family: inherit;
         }
         input[type="text"]:focus, input[type="number"]:focus {
             outline: none;
-            border-color: #2563eb;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
         }
-        .part-details input {
-            margin-top: 4px;
+
+        .part-name-input {
+            font-weight: 600;
+            font-size: 14px;
+            border: none !important;
+            background: transparent !important;
+            padding: 0 !important;
+            box-shadow: none !important;
+            width: auto;
+            min-width: 80px;
+            color: var(--text);
         }
-        .price-inputs {
-            display: flex;
-            gap: 10px;
-            margin-top: 8px;
-        }
-        .price-input-group {
-            flex: 1;
-        }
-        .price-input-group label {
+        .part-name-input:focus { border-bottom: 1px solid var(--primary) !important; }
+
+        .field-label {
             display: block;
             font-size: 11px;
-            color: #6b7280;
-            margin-bottom: 2px;
+            color: var(--text-muted);
+            font-weight: 500;
+            margin-bottom: 3px;
         }
-        .price-input-group input {
-            width: 100%;
-        }
+        .price-inputs { display: flex; gap: 8px; margin-top: 8px; }
+        .price-group { flex: 1; }
+        .url-field { margin-top: 8px; }
+
+        /* ── PURCHASED TOGGLE ────────────────────────────── */
         .purchased-toggle {
-            background: #e5e7eb;
-            color: #4b5563;
-            padding: 4px 10px;
-            border-radius: 4px;
-            font-size: 12px;
+            background: var(--surface);
+            color: var(--text-muted);
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
             font-weight: 600;
-            border: none;
+            border: 1px solid var(--border);
             cursor: pointer;
+            transition: var(--transition);
+            white-space: nowrap;
+            flex-shrink: 0;
+            font-family: inherit;
         }
-        .purchased-toggle.active {
-            background: #10b981;
-            color: white;
+        .purchased-toggle:hover { border-color: var(--accent); color: var(--accent-dark); }
+        .purchased-toggle.active { background: var(--accent); color: white; border-color: var(--accent); }
+
+        /* ── VIEW MODE ───────────────────────────────────── */
+        .part-view-row {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 14px;
         }
-        .total-section {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-        .total-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            margin-top: 20px;
-        }
-        .total-item {
-            padding: 15px;
-            background: #f9fafb;
-            border-radius: 6px;
-        }
-        .total-label {
+        .part-view-info { flex: 1; min-width: 0; }
+        .part-view-name {
+            font-weight: 600;
             font-size: 14px;
-            color: #6b7280;
-            margin-bottom: 5px;
+            color: var(--text);
+            margin-bottom: 3px;
         }
-        .total-value {
-            font-size: 32px;
+        .part-view-details { font-size: 13px; color: var(--text-muted); margin-bottom: 4px; }
+        .part-view-link {
+            font-size: 12px;
+            color: var(--primary);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+        }
+        .part-view-link:hover { text-decoration: underline; }
+
+        .part-view-price { text-align: right; flex-shrink: 0; }
+        .price-current { font-size: 18px; font-weight: 700; color: var(--accent-dark); display: block; }
+        .price-tbd { font-size: 14px; color: var(--warning); font-style: italic; display: block; }
+        .price-original { font-size: 12px; color: var(--text-light); text-decoration: line-through; display: block; margin-top: 2px; }
+
+        .purchased-badge {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            font-size: 10px;
             font-weight: 700;
-            color: #2563eb;
+            padding: 2px 8px;
+            border-radius: 20px;
+            letter-spacing: 0.5px;
+            margin-top: 6px;
         }
-        .savings {
-            color: #10b981;
+
+        .empty-state {
+            font-size: 13px;
+            color: var(--text-light);
+            font-style: italic;
+            padding: 8px 0;
         }
-        .reset-btn {
-            margin-top: 15px;
-            padding: 8px 16px;
-            background: #ef4444;
+
+        /* ── FOOTER ──────────────────────────────────────── */
+        .page-footer {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 28px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            flex-wrap: wrap;
+        }
+
+        /* ── TOAST ───────────────────────────────────────── */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--text);
             color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
+            padding: 10px 18px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 500;
+            opacity: 0;
+            transform: translateY(8px);
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            z-index: 1000;
+            pointer-events: none;
+            max-width: 320px;
         }
-        .reset-btn:hover {
-            background: #dc2626;
+        .toast.show { opacity: 1; transform: translateY(0); }
+
+        /* ── MODE INDICATOR ──────────────────────────────── */
+        .mode-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 20px;
         }
-        @media (max-width: 768px) {
-            .container {
-                grid-template-columns: 1fr;
-            }
-            .total-grid {
-                grid-template-columns: 1fr 1fr;
-            }
+        .mode-pill {
+            font-size: 12px;
+            color: var(--text-muted);
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 4px 14px;
+        }
+
+        /* ── RESPONSIVE ──────────────────────────────────── */
+        @media (max-width: 900px) {
+            .builds-grid { grid-template-columns: 1fr; }
+            .section-full { grid-column: 1; }
+        }
+
+        @media (max-width: 640px) {
+            .header-inner { padding: 0 16px; }
+            .header-title p { display: none; }
+            .main { padding: 16px; }
+            .stats-bar { grid-template-columns: 1fr 1fr; gap: 12px; }
+            .stat-value { font-size: 22px; }
+        }
+
+        @media (max-width: 400px) {
+            .header-actions .btn-secondary { display: none; }
         }
     </style>
 </head>
 <body>
-    <a href="https://hub-phi-blush.vercel.app" style="position:fixed;top:12px;left:12px;font-size:12px;color:rgba(0,0,0,0.4);background:rgba(0,0,0,0.06);padding:5px 10px;border-radius:6px;text-decoration:none;z-index:999;transition:all 0.15s" onmouseover="this.style.color='rgba(0,0,0,0.8)'" onmouseout="this.style.color='rgba(0,0,0,0.4)'">← hub</a>
-    <h1>🖥️ PC Build Parts Tracker</h1>
-    <div class="subtitle">
-        <button id="modeToggle" onclick="toggleMode()" style="padding: 8px 16px; background: #2563eb; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; margin-bottom: 10px;">
-            Switch to View Mode
-        </button>
-        <div id="modeText" style="margin-top: 5px; color: #6b7280;">Edit Mode: Click fields to edit • Changes auto-save</div>
-    </div>
-    
-    <div class="container" id="partsContainer"></div>
 
-    <div class="total-section">
-        <h2>Budget Summary</h2>
-        <div class="total-grid">
-            <div class="total-item">
-                <div class="total-label">Items Purchased</div>
-                <div class="total-value" id="itemsCount">0/0</div>
-            </div>
-            <div class="total-item">
-                <div class="total-label">Already Spent</div>
-                <div class="total-value" id="totalSpent">$0</div>
-            </div>
-            <div class="total-item">
-                <div class="total-label">Remaining (Est.)</div>
-                <div class="total-value" id="totalRemaining">$0</div>
-            </div>
-            <div class="total-item">
-                <div class="total-label savings">Total Savings</div>
-                <div class="total-value savings" id="totalSavings">$0</div>
-            </div>
+<header class="site-header">
+    <div class="header-accent"></div>
+    <div class="header-inner">
+        <a href="https://hub-phi-blush.vercel.app" class="back-link">← hub</a>
+        <div class="header-title">
+            <h1>🖥️ PC Build Tracker</h1>
+            <p>Track components, compare prices, monitor progress</p>
         </div>
-        <button class="reset-btn" onclick="resetToDefaults()">Reset to Defaults</button>
+        <div class="header-actions">
+            <button id="modeToggle" class="btn btn-secondary btn-sm" onclick="toggleMode()">View Mode</button>
+            <button class="btn btn-ghost btn-sm" onclick="toggleSync()" title="Cross-device sync">⇄ Sync</button>
+        </div>
+    </div>
+</header>
+
+<main class="main">
+
+    <!-- Sync Panel -->
+    <div class="sync-panel" id="syncPanel">
+        <div class="sync-panel-title">⇄ Cross-Device Sync</div>
+        <p>Export a sync link on this device and open it on your other device — your data loads automatically. After loading, changes save locally on each device; re-export to sync again.</p>
+        <div class="sync-actions">
+            <button class="btn btn-primary btn-sm" onclick="exportShareLink()">📋 Copy Sync Link</button>
+            <button class="btn btn-secondary btn-sm" onclick="exportToFile()">💾 Download JSON</button>
+            <button class="btn btn-secondary btn-sm" onclick="document.getElementById('importFile').click()">📁 Import JSON</button>
+        </div>
     </div>
 
-    <script>
-        let isViewMode = false;
+    <!-- Stats -->
+    <div class="stats-bar">
+        <div class="stat-card">
+            <div class="stat-label">Purchased</div>
+            <div class="stat-value" id="itemsCount">0/0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Already Spent</div>
+            <div class="stat-value" id="totalSpent">$0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Remaining (Est.)</div>
+            <div class="stat-value" id="totalRemaining">$0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Total Savings</div>
+            <div class="stat-value savings" id="totalSavings">$0</div>
+        </div>
+    </div>
 
-        const defaultData = {
-            currentPC: [
-                { name: 'CPU', details: 'Ryzen 7 5700X', price: 162, originalPrice: null, purchased: false, url: '' },
-                { name: 'AIO Cooler', details: 'DI COOLING DX240', price: 43, originalPrice: 80, purchased: true, url: '' },
-                { name: 'RAM', details: '2x8GB 3200MHz', price: null, originalPrice: null, purchased: false, url: '' }
-            ],
-            newPC: [
-                { name: 'CPU', details: 'Ryzen 5 9600X', price: 198, originalPrice: 280, purchased: false, url: '' },
-                { name: 'Motherboard', details: 'MSI PRO B650-A WiFi', price: 140, originalPrice: 210, purchased: true, url: '' },
-                { name: 'AIO Cooler', details: 'DARKROCK D360', price: 50, originalPrice: null, purchased: true, url: '' },
-                { name: 'RAM', details: '2x16GB 6000MHz', price: null, originalPrice: null, purchased: false, url: '' },
-                { name: 'GPU', details: 'GIGABYTE RX 7800 XT 16GB', price: '550-600', originalPrice: null, purchased: false, url: '' },
-                { name: 'PSU', details: '650W Modular/Semi-Modular', price: null, originalPrice: null, purchased: false, url: '' },
-                { name: 'Storage', details: '2TB NVMe (x2)', price: '200-250', originalPrice: null, purchased: false, url: '' }
-            ],
-            peripherals: []
-        };
+    <!-- Mode pill -->
+    <div class="mode-bar">
+        <span class="mode-pill" id="modePill">✏️ Edit Mode — click fields to edit, changes auto-save</span>
+    </div>
 
-        function loadData() {
-            const saved = localStorage.getItem('pcPartsData');
-            if (saved) {
-                const data = JSON.parse(saved);
-                // Migration: add peripherals array if it doesn't exist
-                if (!data.peripherals) {
-                    data.peripherals = [];
-                }
-                // Migration: add url field to existing parts if missing
-                ['currentPC', 'newPC', 'peripherals'].forEach(key => {
-                    if (data[key]) {
-                        data[key].forEach(part => {
-                            if (!part.hasOwnProperty('url')) {
-                                part.url = '';
-                            }
-                        });
-                    }
-                });
-                return data;
-            }
-            return defaultData;
+    <!-- Parts grid -->
+    <div class="builds-grid" id="partsContainer"></div>
+
+    <div class="page-footer">
+        <button class="btn btn-danger btn-sm" onclick="resetToDefaults()">Reset to Defaults</button>
+    </div>
+
+</main>
+
+<div class="toast" id="toast"></div>
+<input type="file" id="importFile" accept=".json" style="display:none" onchange="handleImportFile(event)">
+
+<script>
+    let isViewMode = false;
+
+    // ── DEFAULT DATA ────────────────────────────────────
+    const defaultData = {
+        currentPC: [
+            { name: 'CPU',        details: 'Ryzen 7 5700X',     price: 162,  originalPrice: null, purchased: false, url: '' },
+            { name: 'AIO Cooler', details: 'DI COOLING DX240',  price: 43,   originalPrice: 80,   purchased: true,  url: '' },
+            { name: 'RAM',        details: '2x8GB 3200MHz',     price: null, originalPrice: null, purchased: false, url: '' }
+        ],
+        newPC: [
+            { name: 'CPU',         details: 'Ryzen 5 9600X',           price: 198,       originalPrice: 280,  purchased: false, url: '' },
+            { name: 'Motherboard', details: 'MSI PRO B650-A WiFi',     price: 140,       originalPrice: 210,  purchased: true,  url: '' },
+            { name: 'AIO Cooler',  details: 'DARKROCK D360',           price: 50,        originalPrice: null, purchased: true,  url: '' },
+            { name: 'RAM',         details: '2x16GB 6000MHz',          price: null,      originalPrice: null, purchased: false, url: '' },
+            { name: 'GPU',         details: 'GIGABYTE RX 7800 XT 16GB',price: '550-600', originalPrice: null, purchased: false, url: '' },
+            { name: 'PSU',         details: '650W Modular/Semi-Modular',price: null,      originalPrice: null, purchased: false, url: '' },
+            { name: 'Storage',     details: '2TB NVMe (x2)',           price: '200-250', originalPrice: null, purchased: false, url: '' }
+        ],
+        peripherals: []
+    };
+
+    // ── DATA PERSISTENCE ────────────────────────────────
+    function loadData() {
+        const saved = localStorage.getItem('pcPartsData');
+        if (!saved) return JSON.parse(JSON.stringify(defaultData));
+        const data = JSON.parse(saved);
+        if (!data.peripherals) data.peripherals = [];
+        ['currentPC', 'newPC', 'peripherals'].forEach(key => {
+            (data[key] || []).forEach(part => {
+                if (!part.hasOwnProperty('url')) part.url = '';
+            });
+        });
+        return data;
+    }
+
+    function saveData(data) {
+        localStorage.setItem('pcPartsData', JSON.stringify(data));
+        updateStats(data);
+    }
+
+    // ── RENDERING ───────────────────────────────────────
+    function renderParts() {
+        const data = loadData();
+        const container = document.getElementById('partsContainer');
+        container.innerHTML = '';
+
+        const sorted = key => [...data[key]].sort((a, b) => a.purchased - b.purchased);
+
+        if (isViewMode) {
+            container.appendChild(makeSectionCard('Current PC', sorted('currentPC'), renderPartsView));
+            container.appendChild(makeSectionCard('New PC Build', sorted('newPC'), renderPartsView));
+            const periphCard = makeSectionCard('Peripherals', sorted('peripherals'), renderPartsView, true);
+            container.appendChild(periphCard);
+        } else {
+            container.appendChild(makeSectionCard('Current PC', sorted('currentPC'), (parts) => renderPartsEdit(parts, data.currentPC, 'currentPC')));
+            container.appendChild(makeSectionCard('New PC Build', sorted('newPC'), (parts) => renderPartsEdit(parts, data.newPC, 'newPC')));
+            const periphCard = makeSectionCard('Peripherals', sorted('peripherals'), (parts) => renderPartsEdit(parts, data.peripherals, 'peripherals'), true);
+            // Add "Add Peripheral" button to section header
+            const addBtn = document.createElement('button');
+            addBtn.className = 'btn btn-primary btn-xs';
+            addBtn.textContent = '+ Add';
+            addBtn.onclick = addPeripheral;
+            periphCard.querySelector('.section-header').appendChild(addBtn);
+            container.appendChild(periphCard);
         }
 
-        function saveData(data) {
-            localStorage.setItem('pcPartsData', JSON.stringify(data));
-            renderParts();
-        }
+        updateStats(data);
+    }
 
-        function renderParts() {
-            const data = loadData();
-            const container = document.getElementById('partsContainer');
-            
-            if (isViewMode) {
-                // Sort: unpurchased first, then purchased in view mode too
-                const sortedCurrentPC = [...data.currentPC].sort((a, b) => a.purchased - b.purchased);
-                const sortedNewPC = [...data.newPC].sort((a, b) => a.purchased - b.purchased);
-                const sortedPeripherals = [...data.peripherals].sort((a, b) => a.purchased - b.purchased);
-                
-                container.innerHTML = `
-                    <div class="build-section">
-                        <h2>Current PC Upgrade</h2>
-                        ${renderPartsListView(sortedCurrentPC)}
-                    </div>
-                    <div class="build-section">
-                        <h2>New PC Build</h2>
-                        ${renderPartsListView(sortedNewPC)}
-                    </div>
-                `;
-                
-                // Add peripherals section after the main container
-                const peripheralsSection = document.createElement('div');
-                peripheralsSection.className = 'build-section';
-                peripheralsSection.style.gridColumn = '1 / -1';
-                peripheralsSection.innerHTML = `
-                    <h2>Peripherals</h2>
-                    ${data.peripherals.length > 0 ? renderPartsListView(sortedPeripherals) : '<p style="color: #6b7280; font-style: italic;">No peripherals added yet</p>'}
-                `;
-                container.appendChild(peripheralsSection);
-            } else {
-                // Sort: unpurchased first, then purchased
-                const sortedCurrentPC = [...data.currentPC].sort((a, b) => a.purchased - b.purchased);
-                const sortedNewPC = [...data.newPC].sort((a, b) => a.purchased - b.purchased);
-                const sortedPeripherals = [...data.peripherals].sort((a, b) => a.purchased - b.purchased);
-                
-                container.innerHTML = `
-                    <div class="build-section">
-                        <h2>Current PC Upgrade</h2>
-                        ${renderPartsListEdit(sortedCurrentPC, data.currentPC, 'currentPC')}
-                    </div>
-                    <div class="build-section">
-                        <h2>New PC Build</h2>
-                        ${renderPartsListEdit(sortedNewPC, data.newPC, 'newPC')}
-                    </div>
-                `;
-                
-                // Add peripherals section after the main container
-                const peripheralsSection = document.createElement('div');
-                peripheralsSection.className = 'build-section';
-                peripheralsSection.style.gridColumn = '1 / -1';
-                peripheralsSection.innerHTML = `
-                    <h2>Peripherals</h2>
-                    ${data.peripherals.length > 0 ? renderPartsListEdit(sortedPeripherals, data.peripherals, 'peripherals') : '<p style="color: #6b7280; font-style: italic;">No peripherals added yet</p>'}
-                    <button onclick="addPeripheral()" style="margin-top: 15px; padding: 8px 16px; background: #2563eb; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px;">+ Add Peripheral</button>
-                `;
-                container.appendChild(peripheralsSection);
-            }
+    function makeSectionCard(title, parts, renderFn, fullWidth = false) {
+        const card = document.createElement('div');
+        card.className = 'section-card' + (fullWidth ? ' section-full' : '');
 
-            calculateTotals(data);
-        }
+        const badge = `<span class="section-badge">${parts.filter(p => p.purchased).length}/${parts.length}</span>`;
+        card.innerHTML = `
+            <div class="section-header">
+                <span class="section-title">${escHtml(title)} ${badge}</span>
+            </div>
+            <div class="section-body" id="body-${title.replace(/\s/g,'_')}"></div>
+        `;
+        card.querySelector('.section-body').innerHTML = renderFn(parts);
+        return card;
+    }
 
-        function renderPartsListView(parts) {
-            return parts.map(part => `
-                <div class="part-item ${part.purchased ? 'purchased' : ''}" style="position: relative; display: flex; justify-content: space-between; align-items: center;">
-                    <div style="flex: 1;">
-                        <div style="font-weight: 600; color: #1f2937; margin-bottom: 8px;">${part.name}</div>
-                        <div style="font-size: 14px; color: #6b7280; margin-bottom: 8px;">${part.details}</div>
-                        ${part.url ? `<div style="margin-bottom: 8px;"><a href="${part.url}" target="_blank" style="color: #2563eb; text-decoration: none; font-size: 13px;">🔗 View Product</a></div>` : ''}
-                        ${part.purchased ? '<div style="text-align: center; margin-top: 12px;"><span class="purchased-badge">PURCHASED</span></div>' : ''}
+    function renderPartsView(parts) {
+        if (!parts.length) return '<p class="empty-state">No items yet</p>';
+        return parts.map(part => `
+            <div class="part-item ${part.purchased ? 'purchased' : ''}">
+                <div class="part-view-row">
+                    <div class="part-view-info">
+                        <div class="part-view-name">${escHtml(part.name)}</div>
+                        <div class="part-view-details">${escHtml(part.details)}</div>
+                        ${part.url ? `<a href="${escAttr(part.url)}" target="_blank" rel="noopener" class="part-view-link">🔗 View Product</a>` : ''}
+                        ${part.purchased ? '<div><span class="purchased-badge">PURCHASED</span></div>' : ''}
                     </div>
-                    <div style="display: flex; flex-direction: column; gap: 8px; align-items: flex-end; justify-content: center; margin-left: 20px;">
-                        ${part.price ? `<span style="color: #059669; font-weight: 700; font-size: 20px;">$${part.price}</span>` : '<span style="color: #f59e0b; font-style: italic; font-size: 18px;">TBD</span>'}
-                        ${part.originalPrice ? `<span style="color: #9ca3af; text-decoration: line-through; font-size: 16px;">$${part.originalPrice}</span>` : ''}
+                    <div class="part-view-price">
+                        ${part.price
+                            ? `<span class="price-current">$${escHtml(String(part.price))}</span>`
+                            : `<span class="price-tbd">TBD</span>`}
+                        ${part.originalPrice ? `<span class="price-original">$${escHtml(String(part.originalPrice))}</span>` : ''}
                     </div>
                 </div>
-            `).join('');
-        }
+            </div>
+        `).join('');
+    }
 
-        function toggleMode() {
-            isViewMode = !isViewMode;
-            const button = document.getElementById('modeToggle');
-            const modeText = document.getElementById('modeText');
-            
-            if (isViewMode) {
-                button.textContent = 'Switch to Edit Mode';
-                modeText.textContent = 'View Mode: Read-only with clickable links';
-            } else {
-                button.textContent = 'Switch to View Mode';
-                modeText.textContent = 'Edit Mode: Click fields to edit • Changes auto-save';
-            }
-            
-            renderParts();
-        }
-
-        function renderPartsListEdit(sortedParts, originalParts, buildType) {
-            return sortedParts.map(part => {
-                // Find the original index in unsorted array
-                const originalIndex = originalParts.findIndex(p => p === part);
-                return `
-                <div class="part-item ${part.purchased ? 'purchased' : ''}">
-                    <div class="part-header">
-                        <input type="text" class="part-name" value="${part.name}" 
-                               onchange="updatePart('${buildType}', ${originalIndex}, 'name', this.value)" 
-                               style="border: none; background: transparent; font-weight: 600; color: #1f2937; padding: 0; width: auto;">
-                        <button class="purchased-toggle ${part.purchased ? 'active' : ''}" 
-                                onclick="togglePurchased('${buildType}', ${originalIndex})">
-                            ${part.purchased ? 'PURCHASED' : 'NOT PURCHASED'}
-                        </button>
-                    </div>
-                    <div class="part-details">
-                        <input type="text" value="${part.details}" 
-                               onchange="updatePart('${buildType}', ${originalIndex}, 'details', this.value)">
-                    </div>
-                    <div style="margin-top: 8px;">
-                        <label style="display: block; font-size: 11px; color: #6b7280; margin-bottom: 2px;">Product Link</label>
-                        <input type="text" value="${part.url || ''}" placeholder="https://..." 
-                               onchange="updatePart('${buildType}', ${originalIndex}, 'url', this.value)"
-                               style="font-size: 13px;">
-                    </div>
-                    <div class="price-inputs">
-                        <div class="price-input-group">
-                            <label>Current Price</label>
-                            <input type="text" value="${part.price || ''}" placeholder="TBD"
-                                   onchange="updatePart('${buildType}', ${originalIndex}, 'price', this.value)">
-                        </div>
-                        <div class="price-input-group">
-                            <label>Original Price</label>
-                            <input type="text" value="${part.originalPrice || ''}" placeholder="Optional"
-                                   onchange="updatePart('${buildType}', ${originalIndex}, 'originalPrice', this.value)">
-                        </div>
-                    </div>
-                    ${buildType === 'peripherals' ? `<button onclick="removePeripheral(${originalIndex})" style="margin-top: 10px; padding: 6px 12px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">Remove</button>` : ''}
+    function renderPartsEdit(sortedParts, originalParts, buildType) {
+        if (!sortedParts.length && buildType !== 'peripherals') return '<p class="empty-state">No items</p>';
+        if (!sortedParts.length) return '';
+        return sortedParts.map(part => {
+            const idx = originalParts.indexOf(part);
+            const removeBtn = buildType === 'peripherals'
+                ? `<button class="btn btn-danger btn-xs" style="margin-top:10px" onclick="removePeripheral(${idx})">Remove</button>`
+                : '';
+            return `
+            <div class="part-item ${part.purchased ? 'purchased' : ''}">
+                <div class="part-header">
+                    <input type="text" class="part-name-input" value="${escAttr(part.name)}"
+                           onchange="updatePart('${buildType}', ${idx}, 'name', this.value)">
+                    <button class="purchased-toggle ${part.purchased ? 'active' : ''}"
+                            onclick="togglePurchased('${buildType}', ${idx})">
+                        ${part.purchased ? '✓ Purchased' : 'Not Purchased'}
+                    </button>
                 </div>
-            `}).join('');
+                <div>
+                    <input type="text" value="${escAttr(part.details)}" placeholder="Component details"
+                           onchange="updatePart('${buildType}', ${idx}, 'details', this.value)">
+                </div>
+                <div class="url-field">
+                    <label class="field-label">Product Link</label>
+                    <input type="text" value="${escAttr(part.url || '')}" placeholder="https://..."
+                           onchange="updatePart('${buildType}', ${idx}, 'url', this.value)">
+                </div>
+                <div class="price-inputs">
+                    <div class="price-group">
+                        <label class="field-label">Current Price</label>
+                        <input type="text" value="${escAttr(String(part.price ?? ''))}" placeholder="TBD"
+                               onchange="updatePart('${buildType}', ${idx}, 'price', this.value)">
+                    </div>
+                    <div class="price-group">
+                        <label class="field-label">Original Price</label>
+                        <input type="text" value="${escAttr(String(part.originalPrice ?? ''))}" placeholder="Optional"
+                               onchange="updatePart('${buildType}', ${idx}, 'originalPrice', this.value)">
+                    </div>
+                </div>
+                ${removeBtn}
+            </div>`;
+        }).join('');
+    }
+
+    // ── ACTIONS ─────────────────────────────────────────
+    function updatePart(buildType, index, field, value) {
+        const data = loadData();
+        if (field === 'price' || field === 'originalPrice') {
+            data[buildType][index][field] = value.trim() === '' ? null : value.trim();
+        } else {
+            data[buildType][index][field] = value;
         }
+        saveData(data);
+        showToast('Saved');
+    }
 
-        function updatePart(buildType, index, field, value) {
-            const data = loadData();
-            if (field === 'price' || field === 'originalPrice') {
-                data[buildType][index][field] = value === '' ? null : value;
-            } else {
-                data[buildType][index][field] = value;
-            }
-            saveData(data);
-        }
-
-        function togglePurchased(buildType, index) {
-            const data = loadData();
-            data[buildType][index].purchased = !data[buildType][index].purchased;
-            saveData(data);
-        }
-
-        function calculateTotals(data) {
-            let totalSpent = 0;
-            let totalRemaining = 0;
-            let totalSavings = 0;
-            let purchasedCount = 0;
-            let totalCount = 0;
-
-            [...data.currentPC, ...data.newPC, ...data.peripherals].forEach(part => {
-                totalCount++;
-                const price = parseFloat(part.price) || 0;
-                const originalPrice = parseFloat(part.originalPrice) || 0;
-
-                if (part.purchased) {
-                    purchasedCount++;
-                    if (price) {
-                        totalSpent += price;
-                        if (originalPrice) {
-                            totalSavings += (originalPrice - price);
-                        }
-                    }
-                } else if (price) {
-                    totalRemaining += price;
-                }
-            });
-
-            document.getElementById('itemsCount').textContent = `${purchasedCount}/${totalCount}`;
-            document.getElementById('totalSpent').textContent = `$${totalSpent.toFixed(0)}`;
-            document.getElementById('totalRemaining').textContent = `$${totalRemaining.toFixed(0)}`;
-            document.getElementById('totalSavings').textContent = `$${totalSavings.toFixed(0)}`;
-        }
-
-        function addPeripheral() {
-            const data = loadData();
-            data.peripherals.push({
-                name: 'New Peripheral',
-                details: 'Description',
-                price: null,
-                originalPrice: null,
-                purchased: false,
-                url: ''
-            });
-            saveData(data);
-        }
-
-        function removePeripheral(index) {
-            if (confirm('Remove this peripheral?')) {
-                const data = loadData();
-                data.peripherals.splice(index, 1);
-                saveData(data);
-            }
-        }
-
-        function resetToDefaults() {
-            if (confirm('Reset all data to defaults? This will delete your changes.')) {
-                localStorage.removeItem('pcPartsData');
-                renderParts();
-            }
-        }
-
-        // Initial render
+    function togglePurchased(buildType, index) {
+        const data = loadData();
+        data[buildType][index].purchased = !data[buildType][index].purchased;
+        saveData(data);
         renderParts();
-    </script>
+    }
+
+    function addPeripheral() {
+        const data = loadData();
+        data.peripherals.push({ name: 'New Peripheral', details: 'Description', price: null, originalPrice: null, purchased: false, url: '' });
+        saveData(data);
+        renderParts();
+    }
+
+    function removePeripheral(index) {
+        if (!confirm('Remove this peripheral?')) return;
+        const data = loadData();
+        data.peripherals.splice(index, 1);
+        saveData(data);
+        renderParts();
+    }
+
+    function resetToDefaults() {
+        if (!confirm('Reset all data to defaults? This cannot be undone.')) return;
+        localStorage.removeItem('pcPartsData');
+        renderParts();
+        showToast('Reset to defaults');
+    }
+
+    function toggleMode() {
+        isViewMode = !isViewMode;
+        document.getElementById('modeToggle').textContent = isViewMode ? 'Edit Mode' : 'View Mode';
+        document.getElementById('modePill').textContent = isViewMode
+            ? '👁 View Mode — read-only with clickable product links'
+            : '✏️ Edit Mode — click fields to edit, changes auto-save';
+        renderParts();
+    }
+
+    // ── STATS ───────────────────────────────────────────
+    function updateStats(data) {
+        let spent = 0, remaining = 0, savings = 0, purchased = 0, total = 0;
+        [...data.currentPC, ...data.newPC, ...data.peripherals].forEach(part => {
+            total++;
+            const price = parseFloat(String(part.price).split('-')[0]) || 0;
+            const orig  = parseFloat(part.originalPrice) || 0;
+            if (part.purchased) {
+                purchased++;
+                if (price) { spent += price; if (orig) savings += orig - price; }
+            } else if (price) {
+                remaining += price;
+            }
+        });
+        document.getElementById('itemsCount').textContent   = `${purchased}/${total}`;
+        document.getElementById('totalSpent').textContent   = `$${Math.round(spent)}`;
+        document.getElementById('totalRemaining').textContent = `$${Math.round(remaining)}`;
+        document.getElementById('totalSavings').textContent = `$${Math.round(savings)}`;
+    }
+
+    // ── SYNC / IMPORT / EXPORT ──────────────────────────
+    function toggleSync() {
+        const panel = document.getElementById('syncPanel');
+        panel.classList.toggle('open');
+    }
+
+    function exportShareLink() {
+        const data = loadData();
+        const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(data))));
+        const url = location.origin + location.pathname + '#sync=' + encoded;
+        navigator.clipboard.writeText(url).then(() => {
+            showToast('📋 Sync link copied! Open it on your other device.');
+        }).catch(() => {
+            prompt('Copy this sync link:', url);
+        });
+    }
+
+    function exportToFile() {
+        const data = loadData();
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'pc-tracker-data.json';
+        a.click();
+        URL.revokeObjectURL(a.href);
+        showToast('💾 Data exported');
+    }
+
+    function handleImportFile(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = e => {
+            try {
+                const data = JSON.parse(e.target.result);
+                if (!data.currentPC || !data.newPC) throw new Error('Invalid format');
+                if (!confirm('Import this data? Your current data will be replaced.')) return;
+                localStorage.setItem('pcPartsData', JSON.stringify(data));
+                renderParts();
+                showToast('✅ Data imported successfully');
+            } catch {
+                showToast('❌ Import failed — invalid file');
+            }
+        };
+        reader.readAsText(file);
+        event.target.value = '';
+    }
+
+    function loadFromHash() {
+        const hash = location.hash;
+        if (!hash.startsWith('#sync=')) return;
+        try {
+            const encoded = hash.slice(6);
+            const data = JSON.parse(decodeURIComponent(escape(atob(encoded))));
+            if (!data.currentPC || !data.newPC) throw new Error();
+            if (confirm('Sync data detected! Load it? (Replaces your current local data)')) {
+                localStorage.setItem('pcPartsData', JSON.stringify(data));
+                showToast('✅ Data synced from link');
+            }
+        } catch {
+            showToast('❌ Sync link was invalid');
+        }
+        history.replaceState(null, '', location.pathname);
+    }
+
+    // ── TOAST ───────────────────────────────────────────
+    let toastTimer;
+    function showToast(msg) {
+        const el = document.getElementById('toast');
+        el.textContent = msg;
+        el.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => el.classList.remove('show'), 2200);
+    }
+
+    // ── HELPERS ─────────────────────────────────────────
+    function escHtml(str) {
+        return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+    function escAttr(str) { return escHtml(str); }
+
+    // ── BOOT ────────────────────────────────────────────
+    loadFromHash();
+    renderParts();
+</script>
 </body>
 </html>
